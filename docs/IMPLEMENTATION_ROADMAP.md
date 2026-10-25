@@ -9,10 +9,10 @@ CREATOR SIGNATURE: Dipak Choudhary | SECTION START: ROADMAP -->
 - [x] Call-log repository and history UI gated by role and permission
 - [x] Default Phone role request flow
 - [x] Telecom InCallService lifecycle adapter
-- [x] Basic incoming/ongoing call UI with answer, reject, disconnect and capability-checked hold
+- [x] Basic incoming/ongoing call UI with answer, reject, disconnect, capability-checked hold, mute and speaker routing
 - [x] Speech recognition intent for Hindi voice command input
 - [ ] Verified Gradle build and physical-device validation
-- [ ] Mute, DTMF, audio-route controls and richer call state UX
+- [ ] DTMF keypad, robust audio endpoint routing, richer call state UX and full accessibility pass
 - [ ] Unit/instrumentation tests and accessibility audit
 
 ## Phase 1: Foundation
@@ -23,7 +23,7 @@ CREATOR SIGNATURE: Dipak Choudhary | SECTION START: ROADMAP -->
 
 ## Phase 2: Outgoing calls
 - Use ACTION_DIAL by default
-- Direct ACTION_CALL is intentionally not implemented in this starter
+- Direct calling uses TelecomManager.placeCall only after the user taps a call action and grants CALL_PHONE; fallback is ACTION_DIAL
 - Support dual-SIM behavior through system UI rather than guessing a subscription
 
 ## Phase 3: Default Phone role
