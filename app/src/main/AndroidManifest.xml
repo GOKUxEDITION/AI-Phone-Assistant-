@@ -13,7 +13,7 @@
     <application android:allowBackup="false" android:label="AI Phone Assistant"
         android:supportsRtl="true" android:theme="@android:style/Theme.Material.Light.NoActionBar">
         <!-- SECTION START: Launcher and dialer entry points -->
-        <activity android:name=".ui.InCallActivity" android:exported="true"
+        <activity android:name=".ui.InCallActivity" android:exported="false"
             android:excludeFromRecents="true" android:showWhenLocked="true" android:turnScreenOn="true" />
         <activity android:name=".MainActivity" android:exported="true">
             <intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter>
