@@ -76,7 +76,11 @@ class MainActivity : ComponentActivity() {
     private fun isDefaultDialer(): Boolean =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             getSystemService(RoleManager::class.java).isRoleHeld(RoleManager.ROLE_DIALER)
-        } else false
+        } else {
+            // SECTION START: LEGACY DEFAULT DIALER CHECK
+            getSystemService(TelecomManager::class.java).defaultDialerPackage == packageName
+            // SECTION END: LEGACY DEFAULT DIALER CHECK
+        }
 
     private fun requestDefaultDialer() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
