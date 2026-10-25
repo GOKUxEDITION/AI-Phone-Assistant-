@@ -52,6 +52,7 @@ class MainActivity : ComponentActivity() {
             )) {
                 Surface(Modifier.fillMaxSize()) {
                     CallAssistantScreen(
+                        initialNumber = intent?.data?.schemeSpecificPart.orEmpty(),
                         repository = repository,
                         isDefaultDialer = ::isDefaultDialer,
                         requestDefaultDialer = ::requestDefaultDialer,
@@ -91,13 +92,14 @@ private enum class HomeTab { DIALER, CONTACTS, HISTORY, SETTINGS }
 
 @Composable
 private fun CallAssistantScreen(
+    initialNumber: String,
     repository: PhoneDataRepository,
     isDefaultDialer: () -> Boolean,
     requestDefaultDialer: () -> Unit,
     onDial: (String) -> Unit
 ) {
     var tab by remember { mutableStateOf(HomeTab.DIALER) }
-    var number by remember { mutableStateOf("") }
+    var number by remember { mutableStateOf(initialNumber) }
     var search by remember { mutableStateOf("") }
     var contacts by remember { mutableStateOf(emptyList<com.kaixgen.aiphoneassistant.data.ContactEntry>()) }
     var history by remember { mutableStateOf(emptyList<com.kaixgen.aiphoneassistant.data.CallEntry>()) }
