@@ -1,4 +1,19 @@
+<!-- FILE INFORMATION: IMPLEMENTATION_ROADMAP.md
+Developer/Maintainer: Dipak Choudhary | Powered By: KAIxGenShopLabs
+CREATOR SIGNATURE: Dipak Choudhary | SECTION START: ROADMAP -->
 # Call Manager Implementation Roadmap
+
+## Current repository implementation
+- [x] Compose dialer screen and user-confirmed ACTION_DIAL handoff
+- [x] Contacts Provider repository and searchable contacts UI
+- [x] Call-log repository and history UI gated by role and permission
+- [x] Default Phone role request flow
+- [x] Telecom InCallService lifecycle adapter
+- [x] Basic incoming/ongoing call UI with answer, reject, disconnect and capability-checked hold
+- [x] Speech recognition intent for Hindi voice command input
+- [ ] Verified Gradle build and physical-device validation
+- [ ] Mute, DTMF, audio-route controls and richer call state UX
+- [ ] Unit/instrumentation tests and accessibility audit
 
 ## Phase 1: Foundation
 - Compose navigation and screen state
@@ -8,19 +23,19 @@
 
 ## Phase 2: Outgoing calls
 - Use ACTION_DIAL by default
-- Optional ACTION_CALL only after explicit user intent and CALL_PHONE permission
+- Direct ACTION_CALL is intentionally not implemented in this starter
 - Support dual-SIM behavior through system UI rather than guessing a subscription
 
 ## Phase 3: Default Phone role
 - Explain role requirements before launching RoleManager request
-- Implement ACTION_DIAL handling for tel: URIs
-- Declare an InCallService with correct BIND_INCALL_SERVICE protection and Telecom metadata
-- Provide incoming and ongoing call UI before claiming default-dialer completeness
+- Handle ACTION_DIAL tel: intents
+- Declare an InCallService with BIND_INCALL_SERVICE protection and Telecom metadata
+- Validate incoming and ongoing call UI on a physical device
 
 ## Phase 4: Incoming and active calls
 - Track Call objects and callbacks in a lifecycle-safe Telecom adapter
 - Answer/reject/disconnect only through valid Telecom Call objects
-- Enable mute, hold, DTMF and audio route controls only when supported
+- Enable hold only when supported; other controls require capability checks
 - Handle disconnect causes, process recreation, Bluetooth and OEM differences
 
 ## Phase 5: Call history
@@ -30,9 +45,9 @@
 - Do not mirror sensitive call history to cloud by default
 
 ## Phase 6: Voice assistant
-- SpeechRecognizer or approved speech-to-text provider
-- Resolve contact names; ask user to choose when ambiguous
-- Confirm recipient before placing calls
+- SpeechRecognizer intent opens the system speech recognition experience
+- Resolve contact names and ask user to disambiguate in a future enhancement
+- Confirm recipient through the system dialer before placing calls
 - Keep microphone use visible and follow Android background restrictions
 
 ## Exit criteria
@@ -41,3 +56,10 @@
 - Real-device SIM tests cover incoming, outgoing, rejected, missed and disconnected calls
 - Permissions, privacy disclosures and Play policy have been reviewed
 - No feature is marked complete without evidence
+
+## Known limitations
+- This is not yet a verified production-ready dialer.
+- InCallActivity launching from the background varies by Android version and OEM.
+- READ_CALL_LOG is policy-sensitive; distribution eligibility must be assessed before Play release.
+<!-- SECTION END: ROADMAP -->
+<!-- CREATOR SIGNATURE: Dipak Choudhary | KAIxGenShopLabs -->
