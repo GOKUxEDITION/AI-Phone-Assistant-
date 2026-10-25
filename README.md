@@ -1,55 +1,50 @@
+<!-- FILE INFORMATION: README.md
+Project: AI Phone Assistant | Developer/Maintainer: Dipak Choudhary
+Powered By: KAIxGenShopLabs | CREATOR SIGNATURE: Dipak Choudhary
+SECTION START: PROJECT OVERVIEW -->
 # AI Phone Assistant
 
-Android-native Call Manager starter built with Kotlin and Jetpack Compose.
+**Har Call Ka Smart Saathi**
 
-**Repository:** GOKUxEDITION/AI-Phone-Assistant-  
-**Initial scope:** safe outgoing dialer handoff; architecture foundation for contacts, call history, default-dialer role, and call controls.
+Android-native call manager starter using Kotlin, Jetpack Compose, Android Telecom and the Contacts/Call Log providers.
 
-## Current status
+- **Developer/Maintainer:** Dipak Choudhary
+- **Powered By:** KAIxGenShopLabs
+- **Package:** `com.kaixgen.aiphoneassistant`
+- **Branch:** `main`
 
-Implemented in this starter:
-- Android Gradle project structure
-- Kotlin + Jetpack Compose screen
-- Phone-number entry
-- Opens the system dialer using `Intent.ACTION_DIAL`; the user confirms the call
+## Implemented in source
+- Compose dialer and safe `ACTION_DIAL` handoff
+- Device contact search through Contacts Provider
+- Call history repository and history UI gated by default Phone role and runtime permission
+- Default Phone role request flow
+- Telecom `InCallService` lifecycle adapter
+- Basic incoming/ongoing call UI with answer, reject, disconnect and capability-checked hold controls
+- Hindi speech-recognition intent for voice commands
+- Privacy and implementation documentation
+- GitHub Actions workflow to assemble debug APK and run unit tests
+- Phone number normalization unit tests
 
-Not implemented yet:
-- Contact lookup
-- System call-history access
-- Default Phone app role flow
-- Telecom `InCallService`
-- Incoming-call UI and active-call controls
-- AI speech command handling
-- Automated tests or verified build
+## Build locally
+Requirements: JDK 17, Android SDK Platform 35, Gradle 8.9.
 
-## Build
-
-Requirements:
-- JDK 17
-- Android SDK Platform 35
-- Android Gradle Plugin 8.7.3 compatible Gradle wrapper (generate wrapper with a compatible Gradle installation)
-
-Open the project in Android Studio and allow Gradle sync. Build with:
+The Gradle wrapper is not included yet. With Gradle 8.9 installed:
 
 ```bash
+gradle --version
 gradle :app:assembleDebug
+gradle :app:testDebugUnitTest
 ```
 
-A Gradle wrapper is not committed yet.
+Or open the repository in Android Studio and allow Gradle sync.
 
-## Android permissions and privacy
+## Important limitations
+This is a development implementation baseline, not yet verified as production-ready. The CI workflow is configured, but its actual run must pass before claiming build success. Default Phone role behavior and background launch of the in-call screen vary by Android version and manufacturer and must be tested on a physical device.
 
-The starter declares `READ_CONTACTS` for the future contacts feature but does not request it yet. It does not request call-log permissions or direct-call permission. `ACTION_DIAL` hands the number to the installed dialer and leaves call initiation to the user.
+Call history is sensitive and Google Play restricts call-log permissions. Assess policy eligibility before distribution. Call recording, silent calling, AI speaking to a remote caller, mute, DTMF, and Bluetooth audio routing are not implemented.
 
-Call-log permissions are sensitive and subject to Google Play policy. Full call management requires an eligible default dialer implementation, a user-approved `RoleManager.ROLE_DIALER` flow, a correctly declared `InCallService`, and real-device testing.
+## Source governance
+Source and configuration files use file-information headers, section markers, and creator signatures where supported by the file format. Do not remove attribution or mark features complete without build/device evidence.
 
-## Implementation roadmap
-
-1. Add runtime permission handling and contact search.
-2. Add call-history reader only after policy/role eligibility is confirmed.
-3. Implement default-dialer role request and incoming-call UI.
-4. Implement `InCallService` lifecycle and capability-aware controls.
-5. Add voice commands with contact disambiguation and confirmation.
-6. Add unit/instrumented tests, privacy review, and device validation.
-
-Never claim incoming-call controls or call history work until they have been implemented and tested on a real device.
+<!-- SECTION END: PROJECT OVERVIEW -->
+<!-- CREATOR SIGNATURE: Dipak Choudhary | KAIxGenShopLabs -->
