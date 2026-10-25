@@ -2,8 +2,7 @@
  * FILE INFORMATION: InCallActivity.kt
  * Purpose: Incoming and ongoing call UI driven by Telecom CallSession.
  * Developer/Maintainer: Dipak Choudhary | Powered By: KAIxGenShopLabs
- * CREATOR SIGNATURE: Dipak Choudhary
- * SECTION START: IN-CALL UI
+ * CREATOR SIGNATURE: Dipak Choudhary | SECTION START: IN-CALL UI
  */
 package com.kaixgen.aiphoneassistant.ui
 
@@ -32,17 +31,11 @@ import com.kaixgen.aiphoneassistant.telecom.CallSession
 class InCallActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // SECTION START: LOCK SCREEN COMPATIBILITY
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
             setTurnScreenOn(true)
         }
-        // SECTION END: LOCK SCREEN COMPATIBILITY
-        setContent {
-            MaterialTheme {
-                Surface(Modifier.fillMaxSize()) { InCallScreen() }
-            }
-        }
+        setContent { MaterialTheme { Surface(Modifier.fillMaxSize()) { InCallScreen() } } }
     }
 }
 
@@ -51,6 +44,8 @@ private fun InCallScreen() {
     val number = CallSession.number
     val state = CallSession.state
     val incoming = CallSession.incoming
+    val muted = CallSession.muted
+    val speakerOn = CallSession.speakerOn
     Column(
         modifier = Modifier.fillMaxSize().padding(28.dp),
         verticalArrangement = Arrangement.Center,
@@ -74,13 +69,17 @@ private fun InCallScreen() {
             Spacer(Modifier.height(8.dp))
             OutlinedButton(onClick = { CallSession.reject() }) { Text("Decline") }
         } else if (state != Call.STATE_DISCONNECTED) {
+            OutlinedButton(onClick = { CallSession.toggleMute() }) { Text(if (muted) "Unmute" else "Mute") }
+            Spacer(Modifier.height(8.dp))
+            OutlinedButton(onClick = { CallSession.toggleSpeaker() }) { Text(if (speakerOn) "Speaker off" else "Speaker on") }
+            Spacer(Modifier.height(8.dp))
             if (CallSession.canHold()) {
                 OutlinedButton(onClick = { CallSession.holdOrUnhold() }) { Text("Hold / Resume") }
                 Spacer(Modifier.height(8.dp))
             }
             Button(onClick = { CallSession.disconnect() }) { Text("End call") }
         } else {
-            OutlinedButton(onClick = { /* Call has ended; returning is safe. */ }) { Text("Call ended") }
+            OutlinedButton(onClick = { /* Call ended; no Telecom action remains. */ }) { Text("Call ended") }
         }
     }
 }
