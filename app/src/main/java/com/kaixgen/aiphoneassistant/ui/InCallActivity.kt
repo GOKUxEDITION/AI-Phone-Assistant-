@@ -2,10 +2,12 @@
  * FILE INFORMATION: InCallActivity.kt
  * Purpose: Incoming and ongoing call UI driven by Telecom CallSession.
  * Developer/Maintainer: Dipak Choudhary | Powered By: KAIxGenShopLabs
- * CREATOR SIGNATURE: Dipak Choudhary | SECTION START: IN-CALL UI
+ * CREATOR SIGNATURE: Dipak Choudhary
+ * SECTION START: IN-CALL UI
  */
 package com.kaixgen.aiphoneassistant.ui
 
+import android.os.Build
 import android.os.Bundle
 import android.telecom.Call
 import androidx.activity.ComponentActivity
@@ -22,23 +24,23 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.collectAsState
 import com.kaixgen.aiphoneassistant.telecom.CallSession
 
 class InCallActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setShowWhenLocked(true)
-        setTurnScreenOn(true)
+        // SECTION START: LOCK SCREEN COMPATIBILITY
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            setShowWhenLocked(true)
+            setTurnScreenOn(true)
+        }
+        // SECTION END: LOCK SCREEN COMPATIBILITY
         setContent {
             MaterialTheme {
-                Surface(Modifier.fillMaxSize()) {
-                    InCallScreen()
-                }
+                Surface(Modifier.fillMaxSize()) { InCallScreen() }
             }
         }
     }
@@ -70,13 +72,15 @@ private fun InCallScreen() {
         if (incoming) {
             Button(onClick = { CallSession.answer() }) { Text("Answer") }
             Spacer(Modifier.height(8.dp))
-            OutlinedButton(onClick = { CallSession.reject(); }) { Text("Decline") }
-        } else {
+            OutlinedButton(onClick = { CallSession.reject() }) { Text("Decline") }
+        } else if (state != Call.STATE_DISCONNECTED) {
             if (CallSession.canHold()) {
                 OutlinedButton(onClick = { CallSession.holdOrUnhold() }) { Text("Hold / Resume") }
                 Spacer(Modifier.height(8.dp))
             }
             Button(onClick = { CallSession.disconnect() }) { Text("End call") }
+        } else {
+            OutlinedButton(onClick = { /* Call has ended; returning is safe. */ }) { Text("Call ended") }
         }
     }
 }
