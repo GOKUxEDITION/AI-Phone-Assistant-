@@ -8,6 +8,8 @@ package com.kaixgen.aiphoneassistant
 
 import android.Manifest
 import android.app.role.RoleManager
+import android.telecom.TelecomManager
+import android.os.Bundle
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -42,6 +44,14 @@ import java.util.Locale
 
 class MainActivity : ComponentActivity() {
     private val repository by lazy { PhoneDataRepository(applicationContext) }
+    private var pendingNumber: String? = null
+    private val callPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        val target = pendingNumber
+        pendingNumber = null
+        if (granted && !target.isNullOrBlank()) placeTelecomCall(target)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,9 +92,31 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun openSystemDialer(number: String) {
-        // SECTION START: OUTGOING CALL HANDOFF. User confirms in the system dialer.
-        startActivity(Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", number, null)))
+        // SECTION START: OUTGOING CALL HANDOFF
+        // If selected as the default dialer, a deliberate user action can initiate Telecom.
+        if (isDefaultDialer()) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+                placeTelecomCall(number)
+            } else {
+                pendingNumber = number
+                callPermissionLauncher.launch(Manifest.permission.CALL_PHONE)
+            }
+        } else {
+            startActivity(Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", number, null)))
+        }
         // SECTION END: OUTGOING CALL HANDOFF
+    }
+
+    private fun placeTelecomCall(number: String) {
+        try {
+            getSystemService(TelecomManager::class.java).placeCall(
+                Uri.fromParts("tel", number, null), Bundle()
+            )
+        } catch (_: SecurityException) {
+            startActivity(Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", number, null)))
+        } catch (_: IllegalStateException) {
+            startActivity(Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", number, null)))
+        }
     }
 }
 
@@ -121,10 +153,17 @@ private fun CallAssistantScreen(
             val command = spoken.lowercase(Locale.getDefault())
             val target = command.removePrefix("call ").removePrefix("phone karo ").removeSuffix(" ko call karo").trim()
             val match = repository.searchContacts(target).firstOrNull()
-            if (match != null) onDial(match.number)
-            else {
+            if (match != null) {
+                number = match.number
+                tab = HomeTab.DIALER
+                status = "Contact selected: " + match.name + ". Call button dabakar confirm karein."
+            } else {
                 val digits = command.filter { it.isDigit() || it == '+' }
-                if (digits.isNotBlank()) onDial(digits) else status = "Contact nahi mila. Contacts tab se search karein."
+                if (digits.isNotBlank()) {
+                    number = digits
+                    tab = HomeTab.DIALER
+                    status = "Number ready. Call button dabakar confirm karein."
+                } else status = "Contact nahi mila. Contacts tab se search karein."
             }
         }
     }
